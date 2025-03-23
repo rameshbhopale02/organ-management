@@ -212,19 +212,6 @@ The Organ Donation Management System follows a modern, scalable architecture:
 - Real-time notifications system
 - Telemedicine integration for preliminary consultations
 
-## 📊 Performance Metrics
-
-The system currently achieves:
-- Sub-second response times for most operations
-- 99.9% uptime on AWS infrastructure
-- Handles up to 10,000 registered users efficiently
-- Complete data backup every 24 hours
-
-## 📞 Contact
-
-For questions or support, please contact:
-- Email: your.email@example.com
-- GitHub: [Your GitHub Profile](https://github.com/yourusername)
 
 ## 📄 License
 
