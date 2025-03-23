@@ -8,7 +8,7 @@ A comprehensive web-based platform that streamlines the organ donation process b
   <img src="static/vid/organ_donate_process_2.gif" alt="Organ Donation System Demo" width="100%">
 </div>
 
-![Admin Panel](static/results/admin_panel_1.png)
+
 
 ## 🌟 Features
 
