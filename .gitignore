@@ -62,7 +62,6 @@ ehthumbs.db
 Thumbs.db
 
 # Large media files
-*.mp4
 *.tiff
 *.avi
 *.flv
