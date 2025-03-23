@@ -2,7 +2,7 @@
 
 A comprehensive web-based platform that streamlines the organ donation process by connecting donors with patients in need, managing medical records, and facilitating the organ matching process.
 
-![Dashboard](static/results/dashboard.png)
+![Admin Panel](static/results/admin_panel_1.png)
 
 ## 🌟 Features
 
@@ -11,13 +11,17 @@ A comprehensive web-based platform that streamlines the organ donation process b
   - Role-based access control
   - Password encryption and security measures
 
+![Patient Login](static/results/patient_login.png)
+![Admin Login](static/results/admin_login.png)
+
 - **Donor Management**
   - Complete donor registration with medical history
   - Document upload for medical records and ID verification
   - Donor status tracking
   - Consent management system
 
-![Donor Registration](static/results/donor_registration.png)
+![Donor Registration](static/results/donor_register_1.jpg)
+![Donor Registration](static/results/donor_register_2.jpg)
 
 - **Patient Management**
   - Patient registration with medical requirements
@@ -25,7 +29,8 @@ A comprehensive web-based platform that streamlines the organ donation process b
   - Waiting list management
   - Physician information tracking
 
-![Patient Details](static/results/patient_details.png)
+![Patient Registration](static/results/patient_register_1.jpg)
+![Patient Registration](static/results/patient_register_2.jpg)
 
 - **Organ Matching System**
   - Blood type compatibility algorithm
@@ -39,7 +44,7 @@ A comprehensive web-based platform that streamlines the organ donation process b
   - Document verification interface
   - System logs and activity monitoring
 
-![Admin Dashboard](static/results/admin_panel.png)
+![Admin Panel](static/results/admin_panel_1.png)
 
 - **Document Management**
   - Secure storage of medical documents
@@ -79,8 +84,6 @@ The Organ Donation Management System follows a modern, scalable architecture:
 +------------------------------------------+
 ```
 
-![System Architecture](static/results/architecture.png)
-
 ## 🛠️ Technology Stack
 
 - **Backend**: Python Flask
@@ -100,13 +103,20 @@ The Organ Donation Management System follows a modern, scalable architecture:
 ![Home Page](static/results/home_page.png)
 
 ### Donor Registration
-![Donor Form](static/results/donor_form.png)
+![Donor Registration Form 1](static/results/donor_register_1.jpg)
+![Donor Registration Form 2](static/results/donor_register_2.jpg)
+![Donor Registration Form 3](static/results/donor_register_3.jpg)
+![Donor Registration Form 4](static/results/donor_register_4.jpg)
 
-### Waiting List
-![Waiting List](static/results/waiting_list.png)
+### Patient Registration
+![Patient Registration Form 1](static/results/patient_register_1.jpg)
+![Patient Registration Form 2](static/results/patient_register_2.jpg)
 
-### Match Process
-![Match Process](static/results/match_process.png)
+### Admin Panel
+![Admin Panel](static/results/admin_panel_1.png)
+
+### Contact Form
+![Query Form](static/results/query_form.png)
 
 ## 🚀 Installation & Setup
 
@@ -155,8 +165,6 @@ The Organ Donation Management System follows a modern, scalable architecture:
 - Session management and secure authentication
 - HTTPS encryption for data in transit
 
-![Security Overview](static/results/security.png)
-
 ## 🔄 Workflow
 
 1. **Donor Registration**
@@ -182,8 +190,6 @@ The Organ Donation Management System follows a modern, scalable architecture:
    - Status updates are tracked in real-time
    - Post-donation follow-ups are recorded
 
-![Workflow Diagram](static/results/workflow.png)
-
 ## 👥 User Roles
 
 - **Administrators**: Full system access, user management, match approval
@@ -207,8 +213,6 @@ The system currently achieves:
 - 99.9% uptime on AWS infrastructure
 - Handles up to 10,000 registered users efficiently
 - Complete data backup every 24 hours
-
-![Performance Metrics](static/results/performance.png)
 
 ## 📞 Contact
 
