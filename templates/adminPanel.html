@@ -1,0 +1,548 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Organ Donation System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #16a085;
+            --secondary-color: #128c7e;
+            --accent-color: #2ecc71;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --sidebar-width: 250px;
+            --sidebar-width-collapsed: 70px;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .wrapper {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            width: var(--sidebar-width);
+            z-index: 1000;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .sidebar-header span {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link {
+            text-align: center;
+            padding: 12px 5px;
+        }
+
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        .sidebar-header h4 {
+            margin: 0;
+            flex-grow: 1;
+            white-space: nowrap;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .toggle-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .sidebar-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .sidebar .nav-link {
+            color: var(--dark-text);
+            padding: 12px 20px;
+            margin: 5px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e2e8f0;
+            color: var(--primary-color);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            height: 100vh;
+            overflow-y: auto;
+            width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-card h3 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .stats-card p {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 20px;
+        }
+        
+        .card-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+            <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h4><span>Admin Panel</span></h4>
+                <button class="toggle-btn" id="sidebarCollapse">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="nav flex-column">
+                    <a class="nav-link active" href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <a class="nav-link " href="{{ url_for('get_donor_details') }}">
+                        <i class="fas fa-heart"></i>
+                        <span>Donar</span>
+                    </a>
+             
+                            
+                    <a class="nav-link" href="{{ url_for('get_patient_details') }}">
+                        <i class="fas fa-user-injured"></i>
+                        <span>Patients</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('donated_patients') }}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Donated</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('not_donated_patients') }}">
+                        <i class="fas fa-clock"></i>
+                        <span>Waiting List</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('organDonateProcess') }}">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Donation Process</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('match_history') }}">
+                        <i class="fas fa-history"></i>
+                        <span>Match History</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('manage_testimonials') }}">
+                        <i class="fas fa-comment-alt"></i>
+                        <span>Testimonials</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('contact_management') }}">
+                        <i class="fas fa-address-book"></i>
+                        <span>Contact Management</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+                    </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Flash Messages -->
+            {% include 'flash_messages.html' %}
+            
+            <!-- Page Header -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body py-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h2 class="mb-1 fw-bold">Admin Dashboard</h2>
+                                    <p class="mb-0 opacity-75">Welcome back, {{ session.get('admin_username', 'Admin') }}! Here's an overview of the organ donation system.</p>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fs-5 mb-1">{{ now.strftime('%A') if now else '' }}</div>
+                                    <div class="fs-6 opacity-75">{{ now.strftime('%d %B %Y') if now else '' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Statistics Cards -->
+                <div class="row">
+                <div class="col-md-6 col-lg-3">
+                        <div class="stats-card">
+                            <h3>{{ total_donors|default(0) }}</h3>
+                            <p>Total Donors</p>
+                        </div>
+                    </div>
+                <div class="col-md-6 col-lg-3">
+                        <div class="stats-card">
+                            <h3>{{ total_patients|default(0) }}</h3>
+                            <p>Total Patients</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                        <div class="stats-card">
+                            <h3>{{ total_matches|default(0) }}</h3>
+                            <p>Total Matches</p>
+                        </div>
+                    </div>
+                <div class="col-md-6 col-lg-3">
+                        <div class="stats-card">
+                            <h3>{{ pending_requests|default(0) }}</h3>
+                            <p>Pending Requests</p>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- Summary Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                        <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">System Summary</h5>
+                            </div>
+                            <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-primary"><i class="fas fa-info-circle me-2"></i>Organ Donation Status</h6>
+                                    <p>The system currently has <strong>{{ total_donors }}</strong> registered donors and <strong>{{ total_patients }}</strong> patients in need of organs. <strong>{{ total_matches }}</strong> successful matches have been made, with <strong>{{ pending_requests }}</strong> patients still waiting for a suitable donor.</p>
+                                    
+                                    <h6 class="text-primary mt-4"><i class="fas fa-chart-line me-2"></i>System Performance</h6>
+                                    <p>The match rate is currently at <strong>{{ (total_matches / total_patients * 100)|round|int if total_patients > 0 else 0 }}%</strong> of all registered patients. The average waiting time for patients is being monitored to improve the matching process.</p>
+                                                    </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-primary"><i class="fas fa-tasks me-2"></i>Administrative Tasks</h6>
+                                    <ul class="list-group">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Review urgent patient cases
+                                            <span class="badge bg-danger rounded-pill">{{ urgent_patients|length }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Process new donor registrations
+                                            <span class="badge bg-primary rounded-pill">{{ recent_donors|length }}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Update patient statuses
+                                            <span class="badge bg-warning text-dark rounded-pill">{{ pending_requests }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Recent Activity Cards -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Recent Donors</h5>
+                            </div>
+                            <div class="card-body">
+                            <div class="table-container">
+                                {% if recent_donors %}
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Blood Group</th>
+                                            <th>Organ</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for donor in recent_donors %}
+                                        <tr>
+                                            <td>{{ donor.DonarName }}</td>
+                                            <td>{{ donor.BloodGroup }}</td>
+                                            <td>{{ donor.DonateOrgan }}</td>
+                                            <td>
+                                                <span class="badge {% if donor.Status == 'IN' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                                    {{ donor.Status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                <p class="text-muted">No recent donors found.</p>
+                                {% endif %}
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Recent Patients</h5>
+                            </div>
+                            <div class="card-body">
+                            <div class="table-container">
+                                {% if recent_patients %}
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Blood Group</th>
+                                            <th>Needed Organ</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for patient in recent_patients %}
+                                        <tr>
+                                            <td>{{ patient.fullname }}</td>
+                                            <td>{{ patient.bloodgroup }}</td>
+                                            <td>{{ patient.neededorgan }}</td>
+                                            <td>
+                                                <span class="badge {% if patient.status == 'Donated' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                                    {{ patient.status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                <p class="text-muted">No recent patients found.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Urgent Patients -->
+            <div class="row">
+                <div class="col-12">
+                        <div class="card">
+                        <div class="card-header">
+                                <h5 class="card-title">Urgent Patients</h5>
+                            </div>
+                            <div class="card-body">
+                            <div class="table-container">
+                                {% if urgent_patients %}
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                            <th>Name</th>
+                                            <th>Age</th>
+                                                <th>Blood Group</th>
+                                                <th>Needed Organ</th>
+                                                <th>Urgency</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for patient in urgent_patients %}
+                                        <tr>
+                                                <td>{{ patient.fullname }}</td>
+                                            <td>{{ patient.age }}</td>
+                                                <td>{{ patient.bloodgroup }}</td>
+                                                <td>{{ patient.neededorgan }}</td>
+                                                <td>
+                                                    <span class="badge {% if patient.urgency == 'Critical' %}bg-danger{% elif patient.urgency == 'Urgent' %}bg-warning text-dark{% else %}bg-info{% endif %}">
+                                                    {{ patient.urgency|default('Standard') }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge {% if patient.status == 'Waiting' %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                                        {{ patient.status }}
+                                                    </span>
+                                                </td>
+                                            <td>
+                                                <a href="/edit-patient/{{ patient._id }}" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                <p class="text-muted">No urgent patients found.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const sidebarCollapse = document.getElementById('sidebarCollapse');
+
+            // Initialize sidebar state from localStorage
+            const sidebarState = localStorage.getItem('sidebarCollapsed');
+            if (sidebarState === 'true') {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+            }
+
+            sidebarCollapse.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                // Save sidebar state to localStorage
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            });
+        });
+
+        function viewPatientDetails(patientId) {
+            // Implement patient details view functionality
+            console.log('Viewing details for patient:', patientId);
+        }
+    </script>
+</body>
+</html> 

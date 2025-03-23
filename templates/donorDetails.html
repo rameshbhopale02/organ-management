@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Details - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="/static/js/flash-messages.js" defer></script>
+    <style>
+        :root {
+            --primary-color: #16a085;
+            --secondary-color: #128c7e;
+            --accent-color: #2ecc71;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --sidebar-width: 250px;
+            --sidebar-width-collapsed: 70px;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .wrapper {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            width: var(--sidebar-width);
+            z-index: 1000;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .sidebar-header span {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link {
+            text-align: center;
+            padding: 12px 5px;
+        }
+
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            min-height: 60px;
+        }
+
+        .sidebar-header h4 {
+            margin: 0;
+            flex-grow: 1;
+            white-space: nowrap;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .toggle-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .sidebar-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .sidebar .nav-link {
+            color: var(--dark-text);
+            padding: 12px 20px;
+            margin: 5px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e2e8f0;
+            color: var(--primary-color);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            height: 100vh;
+            overflow-y: auto;
+            width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 20px;
+        }
+        
+        .card-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .table-container {
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .btn-action {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            margin: 0 0.25rem;
+        }
+        
+        .donor-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h4><span>Admin Panel</span></h4>
+                <button class="toggle-btn" id="sidebarCollapse">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="nav flex-column">
+                    <a class="nav-link" href="/admin_panel">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-link active" href="/donor-details">
+                        <i class="fas fa-heart"></i>
+                        <span>Donors</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('get_patient_details') }}">
+                        <i class="fas fa-user-injured"></i>
+                        <span>Patients</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('donated_patients') }}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Donated</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('not_donated_patients') }}">
+                        <i class="fas fa-clock"></i>
+                        <span>Waiting List</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('organDonateProcess') }}">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Donation Process</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('match_history') }}">
+                        <i class="fas fa-history"></i>
+                        <span>Match History</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('manage_testimonials') }}">
+                        <i class="fas fa-comment-alt"></i>
+                        <span>Testimonials</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('contact_management') }}">
+                        <i class="fas fa-address-book"></i>
+                        <span>Contact Management</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">Donor Details</h5>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDonorModal">
+                        <i class="fas fa-plus"></i> Add New Donor
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% include 'flash_messages.html' %}
+
+                    <div class="table-container">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Blood Group</th>
+                                    <th>Contact</th>
+                                    <th>Email</th>
+                                    <th>Organ</th>
+                                    <th>Status</th>
+                                    <th>Documents</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donor in donor_data %}
+                                <tr>
+                                    <td>{{ donor.DonarName }}</td>
+                                    <td>{{ donor.Age }}</td>
+                                    <td>{{ donor.Gender }}</td>
+                                    <td>{{ donor.BloodGroup }}</td>
+                                    <td>{{ donor.Contactnumber }}</td>
+                                    <td>{{ donor.Email }}</td>
+                                    <td>{{ donor.DonateOrgan }}</td>
+                                    <td>
+                                        <span class="badge {% if donor.Status == 'OUT' %}bg-danger{% else %}bg-success{% endif %}">
+                                            {{ donor.Status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if donor.documents %}
+                                            {% if donor.documents.id_proof %}
+                                                <a href="{{ url_for('view_document', donor_id=donor._id, doc_type='id_proof') }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-id-card"></i> View ID
+                                                </a>
+                                            {% endif %}
+                                            {% if donor.documents.medical_history %}
+                                                <a href="{{ url_for('view_document', donor_id=donor._id, doc_type='medical_history') }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                                    <i class="fas fa-file-medical"></i> View Medical History
+                                                </a>
+                                            {% endif %}
+                                            {% if donor.documents.medical_report %}
+                                                <a href="{{ url_for('view_document', donor_id=donor._id, doc_type='medical_report') }}" target="_blank" class="btn btn-sm btn-outline-success">
+                                                    <i class="fas fa-file-medical-alt"></i> View Medical Report
+                                                </a>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">No documents</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('edit_donor', donor_id=donor._id) }}" class="btn btn-primary btn-action">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-danger btn-action" onclick="deleteDonor('{{ donor._id }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Donor Modal -->
+    <div class="modal fade" id="addDonorModal" tabindex="-1" aria-labelledby="addDonorModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDonorModalLabel">Add New Donor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('insert_data') }}" method="POST" id="addDonorForm" enctype="multipart/form-data">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="DonarName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="DonarName" name="DonarName" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="Age" class="form-label">Age</label>
+                                <input type="number" class="form-control" id="Age" name="Age" min="18" max="120" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="Gender" class="form-label">Gender</label>
+                                <select class="form-select" id="Gender" name="Gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="BloodGroup" class="form-label">Blood Group</label>
+                                <select class="form-select" id="BloodGroup" name="BloodGroup" required>
+                                    <option value="">Select Blood Group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="Email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="Email" name="Email" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="Contactnumber" class="form-label">Contact Number</label>
+                                <input type="tel" class="form-control" id="Contactnumber" name="Contactnumber" pattern="[0-9]{10}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="DonateOrgan" class="form-label">Organ to Donate</label>
+                                <select class="form-select" id="DonateOrgan" name="DonateOrgan" required>
+                                    <option value="">Select Organ</option>
+                                    <option value="Kidney">Kidney</option>
+                                    <option value="Liver">Liver</option>
+                                    <option value="Heart">Heart</option>
+                                    <option value="Lungs">Lungs</option>
+                                    <option value="Pancreas">Pancreas</option>
+                                    <option value="Intestines">Intestines</option>
+                                    <option value="Corneas">Corneas</option>
+                                    <option value="Skin">Skin</option>
+                                    <option value="Bone Marrow">Bone Marrow</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="CausesOfDeath" class="form-label">Causes of Death (if applicable)</label>
+                                <input type="text" class="form-control" id="CausesOfDeath" name="CausesOfDeath">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="medical_history" class="form-label">Medical History</label>
+                            <textarea class="form-control" id="medical_history" name="medical_history" rows="2"></textarea>
+                        </div>
+                        
+                        <!-- File Upload Fields -->
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="id_proof" class="form-label">ID Proof</label>
+                                <input type="file" class="form-control" id="id_proof" name="id_proof" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <small class="text-muted">Upload a valid government ID</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="medical_history_doc" class="form-label">Medical History Document</label>
+                                <input type="file" class="form-control" id="medical_history_doc" name="medical_history_doc" accept=".pdf,.jpg,.jpeg,.png" required>
+                                <small class="text-muted">Upload medical history documentation</small>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="medical_report" class="form-label">Medical Report</label>
+                                <input type="file" class="form-control" id="medical_report" name="medical_report" accept=".pdf,.jpg,.jpeg,.png">
+                                <small class="text-muted">Upload recent medical reports (optional)</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="physician_name" class="form-label">Physician Name</label>
+                                <input type="text" class="form-control" id="physician_name" name="physician_name">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="physician_contact" class="form-label">Physician Contact</label>
+                                <input type="text" class="form-control" id="physician_contact" name="physician_contact">
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3">Emergency Contact</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="emergency_contact_name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="emergency_contact_name" name="emergency_contact_name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="emergency_contact_relation" class="form-label">Relationship</label>
+                                <input type="text" class="form-control" id="emergency_contact_relation" name="emergency_contact_relation" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="emergency_contact_phone" class="form-label">Contact Number</label>
+                                <input type="tel" class="form-control" id="emergency_contact_phone" name="emergency_contact_phone" pattern="[0-9]{10}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="emergency_contact_address" class="form-label">Address</label>
+                                <input type="text" class="form-control" id="emergency_contact_address" name="emergency_contact_address">
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3">Consent</h5>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="consent_organ_donation" name="consent_organ_donation" required>
+                                <label class="form-check-label" for="consent_organ_donation">
+                                    I consent to donate my organs for transplantation purposes
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="consent_medical_release" name="consent_medical_release" required>
+                                <label class="form-check-label" for="consent_medical_release">
+                                    I authorize the release of my medical information
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="consent_family_notification" name="consent_family_notification" required>
+                                <label class="form-check-label" for="consent_family_notification">
+                                    I consent to my family being notified about my donation decision
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="consent_privacy_policy" name="consent_privacy_policy" required>
+                                <label class="form-check-label" for="consent_privacy_policy">
+                                    I have read and agree to the privacy policy
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Register Donor</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donor Details Modal -->
+    <div class="modal fade" id="donorDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Donor Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="donorDetailsContent">
+                    <!-- Donor details will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const sidebarCollapse = document.getElementById('sidebarCollapse');
+
+            // Initialize sidebar state from localStorage
+            const sidebarState = localStorage.getItem('sidebarCollapsed');
+            if (sidebarState === 'true') {
+                sidebar.classList.add('collapsed');
+                mainContent.classList.add('expanded');
+            }
+
+            sidebarCollapse.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                // Save sidebar state to localStorage
+                localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+            });
+        });
+
+        function deleteDonor(donorId) {
+            if (confirm('Are you sure you want to delete this donor?')) {
+                // Create a form and submit it
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = "{{ url_for('delete_donor') }}";
+                
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'donor_id';
+                input.value = donorId;
+                
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function viewDonorDetails(donorId) {
+            // Implement donor details view functionality
+            const modal = new bootstrap.Modal(document.getElementById('donorDetailsModal'));
+            // Here you would typically fetch donor details from the server
+            document.getElementById('donorDetailsContent').innerHTML = `
+                <div class="donor-details">
+                    <p><span class="detail-label">Donor ID:</span> ${donorId}</p>
+                    <p><span class="detail-label">Status:</span> Active</p>
+                    <p><span class="detail-label">Registration Date:</span> ${new Date().toLocaleDateString()}</p>
+                </div>
+            `;
+            modal.show();
+        }
+
+        // File upload validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            const maxSize = 16 * 1024 * 1024; // 16MB max file size
+            
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Check file size
+                        if (file.size > maxSize) {
+                            alert('File is too large. Maximum size is 16MB.');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        // Check file type
+                        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                        if (!allowedTypes.includes(file.type)) {
+                            alert('Invalid file type. Please upload PDF or image files only.');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        // Show file name
+                        const small = this.nextElementSibling;
+                        small.textContent = `Selected: ${file.name}`;
+                    }
+                });
+            });
+            
+            // Form validation before submit
+            const addDonorForm = document.getElementById('addDonorForm');
+            if (addDonorForm) {
+                addDonorForm.addEventListener('submit', function(e) {
+                    const requiredFiles = ['id_proof', 'medical_history_doc'];
+                    let isValid = true;
+                    
+                    requiredFiles.forEach(fieldName => {
+                        const fileInput = document.getElementById(fieldName);
+                        if (!fileInput.files || !fileInput.files[0]) {
+                            isValid = false;
+                            alert(`Please upload ${fieldName.replace(/_/g, ' ')}`);
+                        }
+                    });
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

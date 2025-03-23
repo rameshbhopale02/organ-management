@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Donor - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #16a085;
+            --secondary-color: #128c7e;
+            --accent-color: #2ecc71;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+        
+        .sidebar {
+            background-color: white;
+            min-height: 100vh;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: var(--dark-text);
+            padding: 12px 20px;
+            margin: 5px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e2e8f0;
+            color: var(--primary-color);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 15px 20px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="d-flex flex-column">
+                    <h4 class="mb-4 px-3">Admin Panel</h4>
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                            <i class="fas fa-home me-2"></i> Dashboard
+                        </a>
+                        <a class="nav-link active" href="{{ url_for('get_donor_details') }}">
+                            <i class="fas fa-heart me-2"></i> Donors
+                        </a>
+                        <a class="nav-link" href="{{ url_for('get_patient_details') }}">
+                            <i class="fas fa-user-injured me-2"></i> Patients
+                        </a>
+                        <a class="nav-link" href="{{ url_for('donated_patients') }}">
+                            <i class="fas fa-check-circle me-2"></i> Donated
+                        </a>
+                        <a class="nav-link" href="{{ url_for('not_donated_patients') }}">
+                            <i class="fas fa-clock me-2"></i> Waiting List
+                        </a>
+                        <a class="nav-link" href="{{ url_for('organDonateProcess') }}">
+                            <i class="fas fa-exchange-alt me-2"></i> Donation Process
+                        </a>
+                        <a class="nav-link" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Edit Donor Details</h3>
+                    <a href="{{ url_for('get_donor_details') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Back to Donor List
+                    </a>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ url_for('update_donor', donor_id=donor._id) }}" method="POST">
+                            <!-- Personal Information -->
+                            <div class="form-section">
+                                <h4 class="form-section-title"><i class="fas fa-user me-2"></i>Personal Information</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="DonarName" class="form-label">Donor Name</label>
+                                        <input type="text" class="form-control" id="DonarName" name="DonarName" value="{{ donor.DonarName }}" required>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="Age" class="form-label">Age</label>
+                                        <input type="number" class="form-control" id="Age" name="Age" value="{{ donor.Age }}" min="1" max="120" required>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                        <label for="Gender" class="form-label">Gender</label>
+                                        <select class="form-select" id="Gender" name="Gender" required>
+                                            <option value="Male" {% if donor.Gender == 'Male' %}selected{% endif %}>Male</option>
+                                            <option value="Female" {% if donor.Gender == 'Female' %}selected{% endif %}>Female</option>
+                                            <option value="Other" {% if donor.Gender == 'Other' %}selected{% endif %}>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="address" class="form-label">Address</label>
+                                        <textarea class="form-control" id="address" name="address" rows="3" required>{{ donor.address }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="Email" value="{{ donor.Email }}" readonly>
+                                        <small class="text-muted">Email cannot be changed</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Contactnumber" class="form-label">Contact Number</label>
+                                        <input type="tel" class="form-control" id="Contactnumber" name="Contactnumber" value="{{ donor.Contactnumber }}" pattern="[0-9]{10}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Medical Information -->
+                            <div class="form-section">
+                                <h4 class="form-section-title"><i class="fas fa-heartbeat me-2"></i>Medical Information</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="BloodGroup" class="form-label">Blood Group</label>
+                                        <select class="form-select" id="BloodGroup" name="BloodGroup" required>
+                                            <option value="A+" {% if donor.BloodGroup == 'A+' %}selected{% endif %}>A+</option>
+                                            <option value="A-" {% if donor.BloodGroup == 'A-' %}selected{% endif %}>A-</option>
+                                            <option value="B+" {% if donor.BloodGroup == 'B+' %}selected{% endif %}>B+</option>
+                                            <option value="B-" {% if donor.BloodGroup == 'B-' %}selected{% endif %}>B-</option>
+                                            <option value="AB+" {% if donor.BloodGroup == 'AB+' %}selected{% endif %}>AB+</option>
+                                            <option value="AB-" {% if donor.BloodGroup == 'AB-' %}selected{% endif %}>AB-</option>
+                                            <option value="O+" {% if donor.BloodGroup == 'O+' %}selected{% endif %}>O+</option>
+                                            <option value="O-" {% if donor.BloodGroup == 'O-' %}selected{% endif %}>O-</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="DonateOrgan" class="form-label">Donate Organ</label>
+                                        <select class="form-select" id="DonateOrgan" name="DonateOrgan" required>
+                                            <option value="Kidney" {% if donor.DonateOrgan == 'Kidney' %}selected{% endif %}>Kidney</option>
+                                            <option value="Liver" {% if donor.DonateOrgan == 'Liver' %}selected{% endif %}>Liver</option>
+                                            <option value="Heart" {% if donor.DonateOrgan == 'Heart' %}selected{% endif %}>Heart</option>
+                                            <option value="Lungs" {% if donor.DonateOrgan == 'Lungs' %}selected{% endif %}>Lungs</option>
+                                            <option value="Pancreas" {% if donor.DonateOrgan == 'Pancreas' %}selected{% endif %}>Pancreas</option>
+                                            <option value="Intestines" {% if donor.DonateOrgan == 'Intestines' %}selected{% endif %}>Intestines</option>
+                                            <option value="Corneas" {% if donor.DonateOrgan == 'Corneas' %}selected{% endif %}>Corneas</option>
+                                            <option value="Skin" {% if donor.DonateOrgan == 'Skin' %}selected{% endif %}>Skin</option>
+                                            <option value="Bone" {% if donor.DonateOrgan == 'Bone' %}selected{% endif %}>Bone</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="CausesOfDeath" class="form-label">Causes of Death (if applicable)</label>
+                                        <textarea class="form-control" id="CausesOfDeath" name="CausesOfDeath" rows="2">{{ donor.CausesOfDeath }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="medical_history" class="form-label">Medical History</label>
+                                        <textarea class="form-control" id="medical_history" name="medical_history" rows="3">{{ donor.medical_history }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="physician_name" class="form-label">Physician Name</label>
+                                        <input type="text" class="form-control" id="physician_name" name="physician_name" value="{{ donor.physician_name }}">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="physician_contact" class="form-label">Physician Contact</label>
+                                        <input type="text" class="form-control" id="physician_contact" name="physician_contact" value="{{ donor.physician_contact }}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Information -->
+                            <div class="form-section">
+                                <h4 class="form-section-title"><i class="fas fa-info-circle me-2"></i>Status Information</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="Status" class="form-label">Status</label>
+                                        <select class="form-select" id="Status" name="Status" required>
+                                            <option value="OUT" {% if donor.Status == 'OUT' %}selected{% endif %}>OUT</option>
+                                            <option value="IN" {% if donor.Status == 'IN' %}selected{% endif %}>IN</option>
+                                            <option value="Donated" {% if donor.Status == 'Donated' %}selected{% endif %}>Donated</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="{{ url_for('get_donor_details') }}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Update Donor</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

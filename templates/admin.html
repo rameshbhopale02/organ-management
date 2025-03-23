@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="/static/js/flash-messages.js" defer></script>
+    <style>
+      .patient-portal {
+        padding: 2rem 9%;
+        margin: 8rem auto;
+        min-height: calc(100vh - 10rem);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: linear-gradient(to bottom right, #f1f5f9, #e2e8f0);
+        border-radius: 1rem;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      .portal-heading {
+        text-align: center;
+        color: #16a085;
+        margin-bottom: 1rem;
+        font-size: 2.8rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .portal-subheading {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 3rem;
+        font-size: 1.2rem;
+      }
+      .auth-container {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      .auth-tabs {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #e2e8f0;
+        background: #f8fafc;
+        border-radius: 1rem 1rem 0 0;
+        overflow: hidden;
+      }
+      .auth-tab {
+        flex: 1;
+        text-align: center;
+        padding: 1.2rem;
+        font-size: 1.2rem;
+        color: #64748b;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+      }
+      .auth-tab:hover {
+        background: #f1f5f9;
+        color: #16a085;
+      }
+      .auth-tab.active {
+        color: #16a085;
+        background: white;
+        font-weight: 600;
+        border-bottom: 3px solid #16a085;
+      }
+      .auth-form {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 0 0 1rem 1rem;
+      }
+      .auth-form input {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        color: #1e293b;
+        margin: 1rem 0;
+        border: 2px solid #e2e8f0;
+        border-radius: 0.8rem;
+        transition: all 0.3s ease;
+      }
+      .auth-form input:focus {
+        border-color: #16a085;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+      }
+      .auth-form .btn {
+        width: 100%;
+        padding: 1.2rem;
+        background: #16a085;
+        color: white;
+        border: none;
+        border-radius: 0.8rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 2rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .auth-form .btn:hover {
+        background: #128c7e;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(22, 160, 133, 0.2);
+      }
+      .auth-links {
+        text-align: center;
+        margin-top: 2rem;
+        color: #64748b;
+        font-size: 1.1rem;
+      }
+      .auth-links a {
+        color: #16a085;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .auth-links a:hover {
+        color: #128c7e;
+        text-decoration: underline;
+      }
+      .alert {
+        padding: 1rem 1.5rem;
+        margin: 1rem 0;
+        border-radius: 0.8rem;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+      .alert-danger {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+      }
+      .alert-success {
+        background: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+      }
+      .input-group {
+        position: relative;
+        margin: 1.5rem 0;
+      }
+      .input-group i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        font-size: 1.2rem;
+      }
+      .input-group input {
+        padding-left: 3rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="header">
+      <a href="#" class="logo">
+        <i class="fas fa-heartbeat"></i> Organ Donation Management System</a
+      >
+      <nav class="navbar">
+        <a href="/">home</a>
+        <a href="/donor">Donor</a>
+        <a href="/patient">Patient</a>
+        <a href="/admin" class="active">Admin</a>
+      </nav>
+      <div id="menu-btn" class="fas fa-bars"></div>
+    </header>
+
+    <section class="patient-portal">
+      <h1 class="portal-heading">Admin Portal</h1>
+      <p class="portal-subheading">Login To Access Admin Dashboard</p>
+      
+      <div class="auth-container">
+        <div class="auth-tabs">
+          <div class="auth-tab active">Login</div>
+          <a href="/create_user" class="auth-tab">Register</a>
+        </div>
+        
+        <form class="auth-form" action="/admin_login" method="POST">
+          {% include 'flash_messages.html' %}
+          
+          <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" name="Username" style="text-transform: none;" placeholder="Enter username" required>
+            </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password" placeholder="Enter password" required>
+            </div>
+          <button type="submit" class="btn">Login</button>
+          
+          <div class="auth-links">
+            Don't have an account? <a href="/create_user">Create User</a>
+          </div>
+        </form>
+        </div>
+      </section>
+
+    <script src="/static/js/script.js"></script>
+  </body>
+</html>
+

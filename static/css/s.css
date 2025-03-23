@@ -1,0 +1,211 @@
+form {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    animation: fadeIn 1s ease;
+    background-color: #e3ece300;
+    border: 5px solid #e3ece300;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+
+.form-group label {
+    width: 30%;
+    font-size: 14px;
+
+    text-align: left;
+    margin-right: 10px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="password"] {
+    width: 70%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    text-transform: none;
+}
+
+
+
+#address {
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
+
+form h1 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #1C92D2;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+}
+
+form input[type="submit"] {
+
+    background-color: #1C92D2;
+    color: #fff;
+    font-size: 12px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Flash message styles */
+.alert {
+    margin: 20px auto;
+    width: 50%;
+    padding: 10px 20px;
+    text-align: center;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.alert-success {
+    background-color: #ffffff;
+    border-color: #ffffff00;  
+    color: #f1f1f1;
+}
+
+.alert-info {
+    background-color: #d9edf7;
+    border-color: #ffffff;
+    color: #31708f;
+}
+
+.alert-warning {
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b;
+}
+
+.alert-danger {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
+}
+
+.create-user-btn {
+    background-color: #28a745; /* Green background */
+    color: #fff; /* White text */
+    font-size: 12px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none; /* Remove underline */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-user-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+  
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #2c3e50;
+    color: white;
+  }
+  
+  header .logo {
+    font-size: 24px;
+    text-decoration: none;
+    color: white;
+  }
+  
+  .navbar a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+  }
+  
+  #menu-btn {
+    display: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  main {
+    margin: 20px;
+  }
+  
+  .alert {
+    margin: 20px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .create-user-btn {
+    text-decoration: none;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  .create-user-btn:hover {
+    background-color: #2980b9;
+  }
+
+  
+  /* Toast Notification Styles */
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+  opacity: 0;
+  transition: opacity 0.6s, bottom 0.6s;
+}
+
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+  bottom: 50px;
+}

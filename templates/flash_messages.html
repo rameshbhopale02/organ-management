@@ -1,0 +1,77 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div id="flash-messages">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Flash message handling
+        const flashMessages = document.querySelectorAll('#flash-messages .alert');
+        
+        // Show only the first flash message if multiple exist
+        if (flashMessages.length > 1) {
+            for (let i = 1; i < flashMessages.length; i++) {
+                flashMessages[i].style.display = 'none';
+            }
+        }
+        
+        // Auto-dismiss flash messages after 5 seconds
+        setTimeout(function() {
+            const visibleAlerts = document.querySelectorAll('#flash-messages .alert:not([style*="display: none"])');
+            visibleAlerts.forEach(alert => {
+                fadeOut(alert);
+            });
+        }, 5000);
+        
+        // When a flash message is closed, show the next one if it exists
+        document.querySelectorAll('.alert .btn-close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', function() {
+                const currentAlert = this.closest('.alert');
+                currentAlert.remove();
+                
+                // Show the next alert if it exists
+                const hiddenAlerts = document.querySelectorAll('#flash-messages .alert[style*="display: none"]');
+                if (hiddenAlerts.length > 0) {
+                    hiddenAlerts[0].style.display = '';
+                    
+                    // Reset the auto-dismiss timer for the new alert
+                    setTimeout(function() {
+                        fadeOut(hiddenAlerts[0]);
+                    }, 5000);
+                }
+            });
+        });
+        
+        // Helper function to fade out an element
+        function fadeOut(element) {
+            let opacity = 1;
+            const timer = setInterval(function() {
+                if (opacity <= 0.1) {
+                    clearInterval(timer);
+                    element.style.display = 'none';
+                    
+                    // Show the next alert if it exists
+                    const hiddenAlerts = document.querySelectorAll('#flash-messages .alert[style*="display: none"]');
+                    if (hiddenAlerts.length > 0) {
+                        hiddenAlerts[0].style.display = '';
+                        
+                        // Reset the auto-dismiss timer for the new alert
+                        setTimeout(function() {
+                            fadeOut(hiddenAlerts[0]);
+                        }, 5000);
+                    }
+                }
+                element.style.opacity = opacity;
+                opacity -= opacity * 0.1;
+            }, 50);
+        }
+    });
+</script> 

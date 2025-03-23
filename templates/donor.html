@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/flash-messages.js" defer></script>
+    <style>
+        .donor-container {
+            max-width: 800px;
+            margin: 8rem auto 4rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .donor-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .donor-header h2 {
+            color: #16a085;
+            font-size: 2rem;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+            counter-reset: step;
+        }
+
+        .progress-step {
+            width: 2rem;
+            height: 2rem;
+            background-color: #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-step.active {
+            background-color: #16a085;
+        }
+
+        .progress-step.completed {
+            background-color: #16a085;
+        }
+
+        .progress-step::before {
+            counter-increment: step;
+            content: counter(step);
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 4px;
+            width: 100%;
+            background-color: #ddd;
+            z-index: 0;
+        }
+        
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0.75rem;
+        }
+        
+        .form-section {
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 20px;
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .form-section h3 {
+            margin-bottom: 15px;
+            color: #16a085;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            color: #666;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 5px;
+            border-radius: 6px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .alerts {
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert {
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            display: block;
+            padding: 0.8rem;
+            background-color: #f8f9fa;
+            border: 1px dashed #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            background-color: #e9ecef;
+        }
+
+        .file-name {
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .btn {
+            padding: 1rem;
+            margin-top: 1rem;
+            background-color: #16a085;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background-color: #138a72;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .checkbox-group {
+            margin-top: 1rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 5px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .donor-container {
+                margin: 4rem 1rem;
+                padding: 1rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <a href="#" class="logo"> <i class="fas fa-heartbeat"></i> Organ Donation Management System</a>
+        <nav class="navbar">
+            <a href="/">Home</a>
+            <a href="/donor" class="active">Donor</a>
+            <a href="/patient">Patient</a>
+            <a href="/admin">Admin</a>
+        </nav>
+        <div id="menu-btn" class="fas fa-bars"></div>
+    </header>
+
+    <div class="donor-container">
+        <div class="donor-header">
+            <h2><i class="fas fa-hand-holding-heart"></i> Organ Donor Registration</h2>
+            <p>Join us in saving lives through organ donation</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1"></div>
+            <div class="progress-step" data-step="2"></div>
+            <div class="progress-step" data-step="3"></div>
+            <div class="progress-step" data-step="4"></div>
+        </div>
+
+        <div class="alerts">
+            {% include 'flash_messages.html' %}
+        </div>
+
+        <form id="donorForm" action="{{ url_for('insert_data') }}" method="POST" enctype="multipart/form-data">
+            <!-- Step 1: Personal Information -->
+            <div class="form-section active" data-step="1">
+                <h3><i class="fas fa-user"></i> Personal Information</h3>
+                
+                    <div class="form-group">
+                    <label for="DonarName" class="required-field">Full Name</label>
+                   
+                    <input type="text" id="DonarName" name="DonarName" placeholder="Enter your full name" required>
+                    </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Age" class="required-field">Age</label>
+                        <input type="number" id="Age" name="Age" placeholder="Enter your age" min="18" max="120" required>
+                        
+                        <div class="tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="tooltip-text">Must be 18 years or older to register as a donor</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Gender" class="required-field">Gender</label>
+                        <select id="Gender" name="Gender" required>
+                            <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="form-group">
+                    <label for="address" class="required-field">Address</label>
+                    <textarea id="address" name="address" placeholder="Enter your full address" rows="3" required></textarea>
+                    </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="BloodGroup" class="required-field">Blood Group</label>
+                            <select id="BloodGroup" name="BloodGroup" required>
+                            <option value="">Select Blood Group</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                    <div class="form-group">
+                        <label for="Contactnumber" class="required-field">Contact Number</label>
+                        <input type="tel" id="Contactnumber" name="Contactnumber" placeholder="10-digit contact number" pattern="[0-9]{10}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Email" class="required-field">Email Address</label>
+                    <input type="email" id="Email" name="Email" placeholder="Enter your email address" required>
+                </div>
+            </div>
+
+            <!-- Step 2: Medical Information -->
+            <div class="form-section" data-step="2">
+                <h3><i class="fas fa-notes-medical"></i> Medical Information</h3>
+                
+                <div class="form-group">
+                    <label for="DonateOrgan" class="required-field">Organ to Donate</label>
+                    <select id="DonateOrgan" name="DonateOrgan" required>
+                        <option value="">Select Organ</option>
+                        <option value="Kidney">Kidney</option>
+                        <option value="Liver">Liver</option>
+                        <option value="Heart">Heart</option>
+                        <option value="Lungs">Lungs</option>
+                        <option value="Pancreas">Pancreas</option>
+                        <option value="Intestines">Intestines</option>
+                        <option value="Corneas">Corneas</option>
+                        <option value="Bone marrow">Bone Marrow</option>
+                    </select>
+                    <div class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Select the organ you wish to donate</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="medical_history">Medical History</label>
+                    <textarea id="medical_history" name="medical_history" placeholder="Please provide any relevant medical history" rows="4"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="CausesOfDeath" class="required-field">Cause of Death (if applicable)</label>
+                    <input type="text" id="CausesOfDeath" name="CausesOfDeath" placeholder="Enter cause of death if applicable">
+                    <div class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="tooltip-text">Required for deceased donation registration</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="physician_name">Primary Physician Name</label>
+                        <input type="text" id="physician_name" name="physician_name" placeholder="Enter your physician's name">
+                    </div>
+                    <div class="form-group">
+                        <label for="physician_contact">Physician Contact</label>
+                        <input type="tel" id="physician_contact" name="physician_contact" placeholder="Physician's contact number" pattern="[0-9]{10}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Emergency Contact -->
+            <div class="form-section" data-step="3">
+                <h3><i class="fas fa-phone-alt"></i> Emergency Contact Information</h3>
+                
+                <div class="form-group">
+                    <label for="emergency_contact_name" class="required-field">Emergency Contact Name</label>
+                    <input type="text" id="emergency_contact_name" name="emergency_contact_name" placeholder="Enter emergency contact's name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="emergency_contact_relation" class="required-field">Relationship</label>
+                        <input type="text" id="emergency_contact_relation" name="emergency_contact_relation" placeholder="Relationship to donor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emergency_contact_phone" class="required-field">Contact Number</label>
+                        <input type="tel" id="emergency_contact_phone" name="emergency_contact_phone" placeholder="Emergency contact's phone number" pattern="[0-9]{10}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="emergency_contact_address">Address</label>
+                    <textarea id="emergency_contact_address" name="emergency_contact_address" placeholder="Emergency contact's address" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 4: Documentation and Consent -->
+            <div class="form-section" data-step="4">
+                <h3><i class="fas fa-file-alt"></i> Documentation and Consent</h3>
+
+                <div class="form-group">
+                    <label for="id_proof" class="required-field">ID Proof</label>
+                    <div class="file-upload">
+                        <input type="file" id="id_proof" name="id_proof" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <small style="color: #666;">Upload a valid government ID (Passport, Driver's License, etc.)</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="medical_history_doc" class="required-field">Medical History Document</label>
+                    <div class="file-upload">
+                        <input type="file" id="medical_history_doc" name="medical_history_doc" accept=".pdf,.jpg,.jpeg,.png" required>
+                        <small style="color: #666;">Upload medical history documentation</small>
+                    </div>
+                </div>
+
+               
+
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" name="consent_organ_donation" required>
+                        <span class="required-field">I consent to donate my organs after death and understand the implications of this decision.</span>
+                    </label>
+                    
+                    <label>
+                        <input type="checkbox" name="consent_medical_release" required>
+                        <span class="required-field">I authorize the release of my medical information to the organ donation organization.</span>
+                    </label>
+                    
+                    <label>
+                        <input type="checkbox" name="consent_family_notification" required>
+                        <span class="required-field">I confirm that my family is aware of my decision to be an organ donor.</span>
+                    </label>
+
+                    <label>
+                        <input type="checkbox" name="consent_privacy_policy">
+                        I agree to receive updates and information about organ donation (optional).
+                    </label>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">Previous</button>
+                <button type="button" class="btn" id="nextBtn">Next</button>
+                <button type="submit" class="btn" id="submitBtn" onclick="alert('Registration successful!')" style="display: none;">Submit Registration</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Multi-step form handling
+        let currentStep = 1;
+        const totalSteps = 4;
+        const form = document.getElementById('donorForm');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function showStep(step) {
+            // Hide all sections
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show current section
+            document.querySelector(`.form-section[data-step="${step}"]`).classList.add('active');
+            
+            // Update progress bar
+            document.querySelectorAll('.progress-step').forEach((progressStep, index) => {
+                if (index + 1 < step) {
+                    progressStep.classList.add('completed');
+                    progressStep.classList.remove('active');
+                } else if (index + 1 === step) {
+                    progressStep.classList.add('active');
+                    progressStep.classList.remove('completed');
+                } else {
+                    progressStep.classList.remove('completed', 'active');
+                }
+            });
+            
+            // Show/hide buttons
+            prevBtn.style.display = step === 1 ? 'none' : 'block';
+            nextBtn.style.display = step === totalSteps ? 'none' : 'block';
+            submitBtn.style.display = step === totalSteps ? 'block' : 'none';
+        }
+
+        function validateStep(step) {
+            const section = document.querySelector(`.form-section[data-step="${step}"]`);
+            const requiredFields = section.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value) {
+                    isValid = false;
+                    field.classList.add('invalid');
+                } else {
+                    field.classList.remove('invalid');
+                }
+            });
+
+            return isValid;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            if (validateStep(currentStep)) {
+                currentStep++;
+                showStep(currentStep);
+            } else {
+                alert('Please fill in all required fields before proceeding.');
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentStep--;
+            showStep(currentStep);
+        });
+
+        // File upload handling
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name;
+                const fileNameDiv = this.parentElement.querySelector('.file-name');
+                if (fileName) {
+                    fileNameDiv.textContent = fileName;
+                } else {
+                    fileNameDiv.textContent = '';
+                }
+            });
+        });
+
+        // Form validation
+        form.addEventListener('submit', function(event) {
+            if (!validateStep(currentStep)) {
+                event.preventDefault();
+                alert('Please fill in all required fields before submitting.');
+            }
+        });
+
+        // Initialize form
+        showStep(currentStep);
+    </script>
+</body>
+
+</html>

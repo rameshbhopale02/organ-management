@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organ Donation Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* Enhanced Navigation Bar */
+        .header {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+        
+        .navbar {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        /* .navbar a {
+            position: relative;
+            transition: all 0.3s ease;
+            font-size: 1.7rem;
+            color: var(--black);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+        } */
+/*         
+        .navbar a.active {
+            color: var(--green);
+            font-weight: 600;
+            background: rgba(22, 160, 133, 0.1);
+        } */
+        
+        /* .navbar a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: var(--green);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+            border-radius: 10px;
+        } */
+        
+        /* .navbar a:hover::after,
+        .navbar a.active::after {
+            width: 80%;
+        }
+        
+        .navbar a:hover {
+            color: var(--green);
+            background: rgba(22, 160, 133, 0.05);
+        } */
+        
+        @media (max-width: 768px) {
+            .navbar a {
+                padding: 0.3rem 1rem;
+                font-size: 1.5rem;
+            }
+            
+            .navbar a::after {
+                bottom: -1px;
+                height: 2px;
+            }
+        }
+        
+        /* Statistics Cards */
+        .icons-container {
+            gap: 2rem;
+        }
+        
+        .icons {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .icons:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .icons i {
+            font-size: 4rem;
+            padding: 2rem;
+            border-radius: 50%;
+            background: rgba(22, 160, 133, 0.1);
+            color: var(--green);
+            margin-bottom: 1.5rem;
+        }
+        
+        .icons h3 {
+            font-size: 3rem;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+        
+        .icons p {
+            font-size: 1.5rem;
+            color: var(--black);
+        }
+        
+        /* Enhanced Reviews Section */
+        .review .box-container {
+            gap: 3rem;
+        }
+        
+        .review .box-container .box {
+            transition: all 0.3s ease;
+            overflow: visible;
+        }
+        
+        .review .box-container .box:hover {
+            transform: translateY(-10px);
+        }
+        
+        .review .box-container .box::before {
+            height: 12rem;
+            transition: all 0.3s ease;
+        }
+        
+        .review .box-container .box:hover::before {
+            background: #14937a;
+        }
+        
+        .review .box-container .box img {
+            transition: all 0.3s ease;
+            border: 4px solid var(--green);
+        }
+        
+        .review .box-container .box:hover img {
+            transform: scale(1.1);
+        }
+        
+        .review .box-container .box h3 {
+            font-size: 1.8rem;
+            margin-top: 0.5rem;
+        }
+        
+        .review .box-container .box .text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+        }
+        
+        /* Chatbot Icon */
+        .chatbot-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background-color: #16a085;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .chatbot-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .chatbot-tooltip {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .chatbot-icon:hover .chatbot-tooltip {
+            opacity: 1;
+        }
+        
+        /* Patient Reviews Scroller */
+        .review-scroller {
+            position: relative;
+            padding: 2rem 0;
+            margin: 2rem auto;
+            max-width: 1200px;
+            overflow: hidden;
+        }
+        
+        .review-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 1rem 0.5rem;
+            gap: 2rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            scroll-snap-type: x mandatory;
+        }
+        
+        .review-container::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .review-card {
+            flex: 0 0 auto;
+            width: 350px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            scroll-snap-align: start;
+        }
+        
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .review-header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5rem;
+        }
+        
+        .review-header h3 {
+            font-size: 1.8rem;
+            color: var(--green);
+            margin-bottom: 0.8rem;
+        }
+        
+        .review-card .stars {
+            color: #f1c40f;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .review-card .text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 1rem;
+        }
+
+        .review-card .review-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .scroller-controls {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            transform: translateY(-50%);
+            display: flex;
+            justify-content: space-between;
+            padding: 0 1rem;
+            pointer-events: none;
+        }
+        
+        .scroll-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--green);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            pointer-events: auto;
+            opacity: 0.8;
+        }
+        
+        .scroll-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        
+        .scroll-btn.prev-btn {
+            margin-right: auto;
+        }
+        
+        .scroll-btn.next-btn {
+            margin-left: auto;
+        }
+
+        .no-reviews {
+            text-align: center;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 600px;
+        }
+
+        .no-reviews p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        /* Testimonials Section */
+        .testimonials {
+            padding: 2rem 5%;
+        }
+        
+        .testimonials .box-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+            gap: 2rem;
+        }
+        
+        .testimonials .box {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonials .box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .testimonials .box h3 {
+            font-size: 2rem;
+            color: var(--green);
+            margin-bottom: 0.5rem;
+        }
+        
+        .testimonials .box .role {
+            font-size: 1.4rem;
+            color: #777;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonials .box .stars {
+            color: #f1c40f;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonials .box .text {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: var(--black);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <a href="/" class="logo"> <i class="fas fa-heartbeat"></i> Organ Donation Management System</a>
+
+        <nav class="navbar">
+            <a href="/" class="active">Home</a>
+            <a href="/donor">Donor</a>
+            <a href="/patient">Patient</a>
+            <a href="/admin">Admin</a>
+        </nav>
+
+        <div id="menu-btn" class="fas fa-bars"></div>
+    </header>
+
+    <!-- Chatbot Icon -->
+    <a href="/chatbot" class="chatbot-icon">
+        <i class="fas fa-robot"></i>
+        <span class="chatbot-tooltip">Ask our Chatbot</span>
+    </a>
+
+    <section class="home" id="home">
+        <div class="image">
+            <img src="/static/img/home-img.svg" alt="Organ Donation Illustration">
+        </div>
+
+        <div class="content">
+            <h3>Save a Life Afterlife</h3>
+            <p>To become an organ donor, individuals can usually register with their country's organ donation registry
+                or indicate their intent on their driver's license. It is crucial to discuss the decision to be an organ
+                donor with family members to ensure that their wishes are respected.</p>
+            <a href="/donor" class="btn"> Register Now <span class="fas fa-chevron-right"></span> </a>
+        </div>
+    </section>
+
+    <section class="services" id="statistics">
+        <h2 class="heading"> Our <span>Key Statistics</span> </h2>
+
+        <div class="icons-container">
+            <div class="icons">
+                <i class="fas fa-heart"></i>
+                <p>Donors Registered</p>
+                <h3>{{ total_donors | default(300) }}+</h3>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-hand-holding-medical"></i>
+                <p>Organ Transplants Conducted</p>
+                <h3>{{ total_matches|default(150) }}+</h3>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-life-ring"></i>
+                <p>Lives Saved</p>
+                <h3>{{ total_patients|default(500) }}+</h3>
+            </div>
+
+            <div class="icons">
+                <i class="fas fa-hospital"></i>
+                <p>Organ Types Available</p>
+                <h3>10+</h3>
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="services">
+        <h1 class="heading"> our <span>services</span> </h1>
+
+        <div class="box-container">
+            <div class="box">
+                <i class="fas fa-user-plus"></i>
+                <h3>Donor Registration Assistance</h3>
+                <p>We help donors with the registration process for organ donation.</p>
+                <a href="/donor" class="btn"> Register Now <span class="fas fa-chevron-right"></span> </a>
+            </div>
+
+            <div class="box">
+                <i class="fas fa-hands-helping"></i>
+                <h3>Organ Matching and Allocation</h3>
+                <p>We efficiently match available organs with patients in need.</p>
+                <a href="/patient" class="btn"> Find Match <span class="fas fa-chevron-right"></span> </a>
+            </div>
+
+            <div class="box">
+                <i class="fas fa-stethoscope"></i>
+                <h3>Medical Consultations</h3>
+                <p>Consult with medical professionals regarding organ donation.</p>
+                <a href="#book" class="btn"> Contact Us <span class="fas fa-chevron-right"></span> </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <h1 class="heading"> <span>about</span> us </h1>
+
+        <div class="row">
+            <div class="image">
+                <img src="/static/img/about-img.svg" alt="About Us Illustration">
+            </div>
+
+            <div class="content">
+                <h3>We take care of your healthy life</h3>
+                <p style="text-align: justify;">Organ donation is an essential aspect of modern healthcare, allowing medical professionals to provide
+                    life-saving treatments and improve the quality of life for those in need. It relies on the
+                    generosity and altruism of individuals who choose to become donors.
+                </p>
+                <p style="text-align: justify;">Our system streamlines the entire process from donor registration to organ allocation, ensuring that
+                    those in need receive timely help while honoring the wishes of donors.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="review" id="review">
+        <h1 class="heading"> Patient <span>Reviews</span> </h1>
+        
+        {% if patient_reviews %}
+        <div class="review-scroller" data-has-more="{{ 'true' if total_reviews > 3 else 'false' }}">
+            <div class="review-container">
+                {% for review in patient_reviews %}
+                <div class="review-card">
+                    <div class="review-header">
+                        <h3>{{ review.patient_name }}</h3>
+                        <div class="stars">
+                            {% for i in range(review.rating|int) %}
+                                <i class="fas fa-star"></i>
+                            {% endfor %}
+                            {% if (review.rating - review.rating|int)|round(1) == 0.5 %}
+                                <i class="fas fa-star-half-alt"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="text">{{ review.review_text }}</p>
+                    <div class="review-date">
+                        <small>{{ review.date_submitted.strftime('%d %b %Y') if review.date_submitted else '' }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            {% if total_reviews > 3 %}
+            <div class="scroller-controls">
+                <button class="scroll-btn prev-btn" id="scroll-left" aria-label="Previous reviews">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="scroll-btn next-btn" id="scroll-right" aria-label="Next reviews">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="no-reviews">
+            <p>No patient reviews yet. Be the first to share your experience!</p>
+        </div>
+        {% endif %}
+    </section>
+
+    {% if testimonials %}
+    <section class="testimonials" id="testimonials">
+        <h1 class="heading"> Expert <span>Testimonials</span> </h1>
+
+        <div class="box-container">
+            {% for testimonial in testimonials %}
+            <div class="box">
+                <h3>{{ testimonial.name }}</h3>
+                <p class="role">{{ testimonial.role }}</p>
+                <div class="stars">
+                    {% for i in range(testimonial.rating|int) %}
+                        <i class="fas fa-star"></i>
+                    {% endfor %}
+                    {% if (testimonial.rating - testimonial.rating|int)|round(1) == 0.5 %}
+                        <i class="fas fa-star-half-alt"></i>
+                    {% endif %}
+                </div>
+                <p class="text">{{ testimonial.text }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="book" id="book">
+        <h1 class="heading"> <span>Any</span> Query ? </h1>
+
+        <div class="row">
+            <div class="image">
+                <img src="/static/img/book-img.svg" alt="Contact Us Illustration">
+            </div>
+
+            <form id="query-form" action="/submit_query" method="POST">
+                <h3>Contact Us</h3>
+                <input type="text" id="full_name" name="full_name" placeholder="Full Name" class="box" required>
+                <input type="number" id="phone_number" name="phone_number" placeholder="Phone Number" class="box" required>
+                <input type="email" id="email" name="email" placeholder="Email Address" class="box" required>
+                <textarea placeholder="Your Message" id="message" name="message" rows="4" cols="50"
+                    class="box" required></textarea>
+                <input type="submit" value="Send" onclick="alert('Your query has been sent successfully');" class="btn">
+            </form>
+        </div>
+    </section>
+
+    <section class="footer">
+        <div class="box-container">
+            <div class="box">
+                <h3>quick links</h3>
+                <a href="/"> <i class="fas fa-chevron-right"></i> home </a>
+                <a href="#services"> <i class="fas fa-chevron-right"></i> services </a>
+                <a href="#about"> <i class="fas fa-chevron-right"></i> about </a>
+                <a href="#book"> <i class="fas fa-chevron-right"></i> contact us </a>
+                <a href="#review"> <i class="fas fa-chevron-right"></i> reviews </a>
+            </div>
+
+            <div class="box">
+                <h3>our services</h3>
+                <a href="/donor"> <i class="fas fa-chevron-right"></i> Donor Registration </a>
+                <a href="/patient"> <i class="fas fa-chevron-right"></i> Patient Registration </a>
+                <a href="#book"> <i class="fas fa-chevron-right"></i> Medical Consultations</a>
+            </div>
+
+            <div class="box">
+                <h3>contact info</h3>
+                <a href="tel:+1234567890"> <i class="fas fa-phone"></i> +123-456-7890 </a>
+                <a href="tel:+1112223333"> <i class="fas fa-phone"></i> +111-222-3333 </a>
+                <a href="mailto:info@organdonation.com"> <i class="fas fa-envelope"></i> info@organdonation.com </a>
+                <a href="https://www.organdonation.com"> <i class="fas fa-globe"></i> www.organdonation.com </a>
+                <a href="#"> <i class="fas fa-map-marker-alt"></i> Pune - Maharashtra </a>
+            </div>
+
+            <div class="box">
+                <h3>follow us</h3>
+                <a href="#"> <i class="fab fa-facebook-f"></i> facebook </a>
+                <a href="#"> <i class="fab fa-twitter"></i> twitter </a>
+                <a href="#"> <i class="fab fa-youtube"></i> youtube </a>
+                <a href="#"> <i class="fab fa-instagram"></i> instagram </a>
+                <a href="#"> <i class="fab fa-linkedin"></i> linkedin </a>
+            </div>
+        </div>
+
+        <div class="credit"> <span>Organ Donation Management System</span> </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navigation active state management
+            const currentLocation = location.pathname;
+            const navLinks = document.querySelectorAll('.navbar a');
+            let activeLink = null;
+            
+            // Function to set active state
+            const setActiveLink = (link) => {
+                if (activeLink) {
+                    activeLink.classList.remove('active');
+                }
+                link.classList.add('active');
+                activeLink = link;
+            };
+            
+            // Set initial active state based on current path
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentLocation || 
+                    (href === '/' && currentLocation === '') || 
+                    (href !== '/' && currentLocation.startsWith(href))) {
+                    setActiveLink(link);
+                }
+                
+                // Add click handler for smooth transition
+                link.addEventListener('click', function(e) {
+                    if (!this.href.includes('#')) {
+                        setActiveLink(this);
+                    }
+                });
+            });
+            
+            // Mobile menu toggle with smooth animation
+            const menuBtn = document.querySelector('#menu-btn');
+            const navbar = document.querySelector('.navbar');
+            
+            menuBtn.addEventListener('click', () => {
+                menuBtn.classList.toggle('fa-times');
+                navbar.classList.toggle('active');
+                
+                // Add smooth transition for mobile menu
+                if (navbar.classList.contains('active')) {
+                    navbar.style.maxHeight = navbar.scrollHeight + 'px';
+                } else {
+                    navbar.style.maxHeight = '0';
+                }
+            });
+            
+            // Form submission alert
+            const queryForm = document.getElementById('query-form');
+            if(queryForm) {
+                queryForm.addEventListener('submit', function(e) {
+                    setTimeout(() => {
+                        alert("Query submitted successfully!");
+                    }, 100);
+                });
+            }
+        });
+    </script>
+    <script src="/static/js/review-scroller.js"></script>
+</body>
+</html>

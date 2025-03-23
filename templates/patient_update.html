@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .update-container {
+            max-width: 800px;
+            margin: 8rem auto 4rem;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .update-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .update-header h2 {
+            color: #16a085;
+            font-size: 2rem;
+        }
+        
+        /* Form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .password-field {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0.75rem;
+        }
+        
+        .form-section {
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+        
+        .form-section h3 {
+            margin-bottom: 15px;
+            color: #16a085;
+        }
+        
+        .alerts {
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert {
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            margin-top: 1rem;
+            background-color: #16a085;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #138a72;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <a href="#" class="logo"> <i class="fas fa-heartbeat"></i> Organ Donation Management System</a>
+        <nav class="navbar">
+           
+            <a href="/patient_dashboard">Dashboard</a>
+            <a href="/patient_update" class="active">Update Profile</a>
+            <a href="/patient_logout">Logout</a>
+        </nav>
+        <div id="menu-btn" class="fas fa-bars"></div>
+    </header>
+
+    <div class="update-container">
+        <div class="update-header">
+            <h2><i class="fas fa-user-edit"></i> Update Your Profile</h2>
+            <p>Modify your personal information and medical details</p>
+        </div>
+
+        <div class="alerts">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <form action="/patient_update" method="POST">
+            <!-- Personal Information -->
+            <div class="form-section">
+                <h3><i class="fas fa-id-card"></i> Personal Information</h3>
+                
+                <div class="form-group">
+                    <label for="fullname" class="required-field">Full Name</label>
+                    <input type="text" id="fullname" name="fullname" placeholder="Full Name" value="{{ patient.fullname }}" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="age" class="required-field">Age</label>
+                        <input type="number" id="age" name="age" placeholder="Age" min="1" max="120" value="{{ patient.age }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender" class="required-field">Gender</label>
+                        <select id="gender" name="gender" required>
+                            <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
+                            <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
+                            <option value="Other" {% if patient.gender == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address" class="required-field">Address</label>
+                    <textarea id="address" name="address" placeholder="Full Address" rows="3" required>{{ patient.address }}</textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bloodgroup" class="required-field">Blood Group</label>
+                        <select id="bloodgroup" name="bloodgroup" required>
+                            <option value="A+" {% if patient.bloodgroup == 'A+' %}selected{% endif %}>A+</option>
+                            <option value="A-" {% if patient.bloodgroup == 'A-' %}selected{% endif %}>A-</option>
+                            <option value="B+" {% if patient.bloodgroup == 'B+' %}selected{% endif %}>B+</option>
+                            <option value="B-" {% if patient.bloodgroup == 'B-' %}selected{% endif %}>B-</option>
+                            <option value="AB+" {% if patient.bloodgroup == 'AB+' %}selected{% endif %}>AB+</option>
+                            <option value="AB-" {% if patient.bloodgroup == 'AB-' %}selected{% endif %}>AB-</option>
+                            <option value="O+" {% if patient.bloodgroup == 'O+' %}selected{% endif %}>O+</option>
+                            <option value="O-" {% if patient.bloodgroup == 'O-' %}selected{% endif %}>O-</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactnumber" class="required-field">Contact Number</label>
+                        <input type="tel" id="contactnumber" name="contactnumber" placeholder="10-digit contact number" pattern="[0-9]{10}" value="{{ patient.contactnumber }}" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="required-field">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Email Address" value="{{ patient.email }}" readonly>
+                    <small style="color: #666; margin-top: 5px; display: block;">Email cannot be changed</small>
+                </div>
+            </div>
+            
+            <!-- Medical Information -->
+            <div class="form-section">
+                <h3><i class="fas fa-notes-medical"></i> Medical Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="neededorgan">Organ Needed</label>
+                        <input type="text" id="neededorgan" name="neededorgan" value="{{ patient.neededorgan }}" readonly>
+                        <small style="color: #666; margin-top: 5px; display: block;">Contact administration to change organ type</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="urgency" class="required-field">Urgency Level</label>
+                        <select id="urgency" name="urgency" required>
+                            <option value="Critical" {% if patient.urgency == 'Critical' %}selected{% endif %}>Critical - Immediate need</option>
+                            <option value="Urgent" {% if patient.urgency == 'Urgent' %}selected{% endif %}>Urgent - Within weeks</option>
+                            <option value="Standard" {% if patient.urgency == 'Standard' %}selected{% endif %}>Standard - Within months</option>
+                            <option value="Elective" {% if patient.urgency == 'Elective' %}selected{% endif %}>Elective - Timing flexible</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medical_history">Medical History</label>
+                    <textarea id="medical_history" name="medical_history" placeholder="Brief Medical History" rows="4">{{ patient.medical_history }}</textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="physician_name">Physician Name</label>
+                        <input type="text" id="physician_name" name="physician_name" placeholder="Primary Physician Name" value="{{ patient.physician_name }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="physician_contact">Physician Contact</label>
+                        <input type="tel" id="physician_contact" name="physician_contact" placeholder="Physician Contact" pattern="[0-9]{10}" value="{{ patient.physician_contact }}">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Password Update Section -->
+            <div class="form-section">
+                <h3><i class="fas fa-lock"></i> Update Password (Optional)</h3>
+                <p style="margin-bottom: 15px; color: #666;">Leave blank if you don't want to change your password</p>
+                
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
+                    <div class="password-field">
+                        <input type="password" id="current_password" name="current_password" placeholder="Enter your current password">
+                        <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('current_password')"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new_password">New Password</label>
+                    <div class="password-field">
+                        <input type="password" id="new_password" name="new_password" placeholder="Enter your new password">
+                        <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('new_password')"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">Confirm New Password</label>
+                    <div class="password-field">
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your new password">
+                        <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility('confirm_password')"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-row" style="margin-top: 20px;">
+                <button type="submit" class="btn" style="flex: 1;">Update Profile</button>
+                <a href="/patient_dashboard" class="btn btn-secondary" style="flex: 1; text-align: center; display: block; line-height: 2.5;">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Password visibility toggle
+        function togglePasswordVisibility(inputId) {
+            const passwordField = document.getElementById(inputId);
+            const toggleIcon = event.target;
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordField.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+        
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const newPassword = document.querySelector('input[name="new_password"]').value;
+            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+            const currentPassword = document.querySelector('input[name="current_password"]').value;
+            
+            // If attempting to change password, validate
+            if (newPassword || confirmPassword || currentPassword) {
+                // Check if all password fields are filled
+                if (!newPassword || !confirmPassword || !currentPassword) {
+                    event.preventDefault();
+                    alert('All password fields are required when changing password.');
+                    return;
+                }
+                
+                // Check if passwords match
+                if (newPassword !== confirmPassword) {
+                    event.preventDefault();
+                    alert('New passwords do not match!');
+                    return;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html> 

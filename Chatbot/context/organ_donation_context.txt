@@ -1,0 +1,93 @@
+{
+  "General Information": "Organ donation is the process of surgically removing an organ or tissue from one person (the organ donor) and placing it into another person (the recipient). Transplantation is necessary because the recipient's organ has failed or has been damaged by disease or injury.",
+
+  "Types of Donation": {
+    "Living Donation": "When a living person donates an organ (such as one kidney) or part of an organ (such as a portion of the liver).",
+    "Deceased Donation": "When a person donates their organs after death."
+  },
+
+  "Common Organs for Donation": [
+    "Kidneys",
+    "Liver",
+    "Heart",
+    "Lungs",
+    "Pancreas",
+    "Small intestine"
+  ],
+
+  "Tissue Donation": [
+    "Corneas",
+    "Skin",
+    "Heart valves",
+    "Bones",
+    "Blood vessels",
+    "Tendons"
+  ],
+
+  "Eligibility": "Anyone can be a potential donor regardless of age, race, or medical history. Each potential donor is evaluated on a case-by-case basis. Even those with chronic conditions or diseases may be able to donate some organs or tissues.",
+
+  "Process": {
+    "1. Registration": "Register as a donor through your state's registry or when getting/renewing your driver's license.",
+    "2. Medical Evaluation": "Doctors assess which organs are suitable for donation.",
+    "3. Matching": "Compatible recipients are found based on various factors including blood type, size, and medical urgency.",
+    "4. Surgery": "Skilled surgeons perform the organ recovery and transplantation."
+  },
+
+  "Religious Views": "All major religions in the United States support organ donation and consider it a final act of charity and generosity.",
+
+  "Statistics": {
+    "One organ donor can save": "Up to eight lives.",
+    "One tissue donor can help": "More than 75 people.",
+    "Someone is added to the waiting list": "Every 10 minutes.",
+    "Percentage of Americans supporting donation": "About 95%."
+  },
+
+  "Living Donation Benefits": [
+    "Better long-term outcomes",
+    "Shorter waiting time for recipients",
+    "Scheduled surgery at a convenient time",
+    "Reduced cold storage time for organs"
+  ],
+
+  "Waiting List Factors": [
+    "Blood type",
+    "Tissue type",
+    "Organ type",
+    "Medical urgency",
+    "Time on waiting list",
+    "Geographic location"
+  ],
+
+  "Post-Donation Care": {
+    "Recipients": [
+      "Lifelong immunosuppressive medications",
+      "Regular medical check-ups",
+      "Lifestyle modifications",
+      "Careful monitoring for rejection"
+    ],
+    "Living Donors": [
+      "Return to normal activities within weeks",
+      "Have regular follow-up care",
+      "Experience minimal long-term effects",
+      "May need lifestyle modifications"
+    ]
+  },
+
+  "Common Myths": {
+    "Myth: Doctors won't try as hard to save someone who is a registered donor": "Truth: Medical professionals' primary goal is always to save lives.",
+    "Myth: Rich or famous people get priority on the waiting list": "Truth: Factors like medical urgency and time on the list determine priority.",
+    "Myth: My family will be charged for donation": "Truth: There is no cost to the donor's family for organ and tissue donation.",
+    "Myth: Open-casket funerals are not possible for donors": "Truth: Organ donation does not affect the ability to have an open-casket funeral."
+  },
+
+  "Blood Donation Compatibility": {
+    "O-negative": "Universal donors, can donate to all blood groups (A, B, AB, and O, both positive and negative).",
+    "O-positive": "Can donate to any Rh-positive group (A+, B+, AB+, O+).",
+    "A-negative": "Can donate to A-negative, A-positive, AB-negative, and AB-positive.",
+    "A-positive": "Can donate to A-positive and AB-positive.",
+    "B-negative": "Can donate to B-negative, B-positive, AB-negative, and AB-positive.",
+    "B-positive": "Can donate to B-positive and AB-positive.",
+    "AB-negative": "Can donate to AB-negative and AB-positive.",
+    "AB-positive": "Can only donate to AB-positive but is a universal plasma donor."
+  }
+}

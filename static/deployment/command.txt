@@ -1,0 +1,108 @@
+ssh
+http           0.0.0.0 //0.
+https          0.0.0.0 //0.
+custom tcp     8080
+all tcp        0.0.0.0 //0.
+
+key :pem for ubuntu - :pek for putty
+
+sudo su
+
+#mongodb
+1. sudo apt-get install gnupg curl
+
+2. curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \zsudo gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg \ --dearmor
+3. echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+
+4. sudo apt-get update
+
+5. sudo apt-get install -y mongodb-org
+
+6. echo "mongodb-org hold" | sudo dpkg --set-selections
+echo "mongodb-org-database hold" | sudo dpkg --set-selections
+echo "mongodb-org-server hold" | sudo dpkg --set-selections
+echo "mongodb-mongosh hold" | sudo dpkg --set-selections
+echo "mongodb-org-mongos hold" | sudo dpkg --set-selections
+echo "mongodb-org-tools hold" | sudo dpkg --set-selections
+ps --no-headers -o comm 1
+
+7. sudo systemctl start mongod
+
+8. sudo systemctl daemon-reload
+
+9. sudo systemctl status mongod
+
+10. sudo systemctl enable mongod
+
+11. sudo systemctl stop mongod
+
+12. sudo systemctl restart mongod
+
+13. mongosh
+
+
+14. sudo apt-get update
+
+15. sudo apt-get install python3-venv
+
+16. sudo apt-get install python3-pip
+
+17. python3 -m venv venv
+
+18. source venv/bin/activate
+
+19. pip install -r requirements.txt
+
+19. git clone 'https://github.com/ramesh000002/flask-deployment.git'
+
+
+20. python3 application.py
+
+21. sudo nano application.py
+
+22. cat application.py
+
+23. pip install gunicorn
+
+24. gunicorn -b 0.0.0.0:8000 application:application
+
+25. sudo nano /etc/systemd/system/flaskapp.service
+(change path according pwd)
+
+[Unit]
+Description=Gunicorn instance for a simple flask app
+After=network.target
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/flask-deployment
+ExecStart=/home/ubuntu/flask-deployment/venv/bin/gunicorn -b localhost:8000 application:application
+Restart=always
+[Install]
+WantedBy=multi-user.target
+
+26. sudo systemctl daemon-reload
+
+27 sudo systemctl start flaskapp
+
+28. sudo systemctl enable flaskapp
+
+29. curl localhost:8000
+
+30. sudo apt-get intall nginx
+
+31. sudo systemctl start nginx
+
+32. sudo systemctl enable nginx
+
+33. sudo nano /etc/nginx/sites-available/default
+
+upstream flaskapp {
+    server 127.0.0.1:8000;
+}
+
+location / {
+    proxy_pass http://flaskapp;
+}
+
+34. sudo systemctl restart nginx

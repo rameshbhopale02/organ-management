@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #16a085;
+            --secondary-color: #128c7e;
+            --accent-color: #2ecc71;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --sidebar-width: 250px;
+            --sidebar-width-collapsed: 70px;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            width: var(--sidebar-width);
+            z-index: 1000;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed {
+            width: var(--sidebar-width-collapsed);
+        }
+
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .sidebar-header span {
+            display: none;
+        }
+
+        .sidebar.collapsed .nav-link {
+            text-align: center;
+            padding: 12px 5px;
+        }
+
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: calc(100vh - 80px); /* Adjust based on sidebar header height */
+            padding-bottom: 20px;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            min-height: 100vh;
+            width: calc(100% - var(--sidebar-width));
+            transition: all 0.3s;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        
+        .main-content.expanded {
+            margin-left: var(--sidebar-width-collapsed);
+            width: calc(100% - var(--sidebar-width-collapsed));
+        }
+        
+        .sidebar-header {
+            padding: 0 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            min-height: 60px;
+            height: 60px;
+        }
+
+        .sidebar-header h4 {
+            margin: 0;
+            flex-grow: 1;
+            white-space: nowrap;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .toggle-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        .sidebar .nav-link {
+            color: var(--dark-text);
+            padding: 12px 20px;
+            margin: 5px 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: #e2e8f0;
+            color: var(--primary-color);
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .query-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .query-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .query-table th,
+        .query-table td {
+            padding: 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .query-table th {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-assigned {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .assign-doctor-form {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .assign-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .query-text {
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* Table responsive styling */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h4><span>Admin Panel</span></h4>
+                <button class="toggle-btn" id="sidebarCollapse">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="nav flex-column">
+                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('get_donor_details') }}">
+                        <i class="fas fa-heart"></i>
+                        <span>Donors</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('get_patient_details') }}">
+                        <i class="fas fa-user-injured"></i>
+                        <span>Patients</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('donated_patients') }}">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Donated</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('not_donated_patients') }}">
+                        <i class="fas fa-clock"></i>
+                        <span>Waiting List</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('organDonateProcess') }}">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Donation Process</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('match_history') }}">
+                        <i class="fas fa-history"></i>
+                        <span>Match History</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('manage_testimonials') }}">
+                        <i class="fas fa-comment-alt"></i>
+                        <span>Testimonials</span>
+                    </a>
+                    <a class="nav-link active" href="{{ url_for('contact_management') }}">
+                        <i class="fas fa-address-book"></i>
+                        <span>Contact Management</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('logout') }}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Contact Management</h5>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDoctorModal">
+                        <i class="fas fa-user-md me-2"></i> Add Doctor
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% include 'flash_messages.html' %}
+
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact</th>
+                                    <th>Email</th>
+                                    <th>Query</th>
+                                    <th>Status</th>
+                                    <th>Assigned Doctor</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for query in queries %}
+                                <tr>
+                                    <td>{{ query.full_name }}</td>
+                                    <td>{{ query.phone_number }}</td>
+                                    <td>{{ query.email }}</td>
+                                    <td class="query-text">{{ query.message }}</td>
+                                    <td>
+                                        <span class="badge {% if query.assigned_doctor %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                            {{ 'Assigned' if query.assigned_doctor else 'Pending' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <form class="assign-doctor-form" action="{{ url_for('assign_doctor') }}" method="POST">
+                                            <input type="hidden" name="query_id" value="{{ query._id }}">
+                                            <select name="doctor_name" class="form-select form-select-sm" required>
+                                                <option value="">Select Doctor</option>
+                                                {% if doctors %}
+                                                    {% for doctor in doctors %}
+                                                        <option value="{{ doctor.name }}" {% if query.assigned_doctor == doctor.name %}selected{% endif %}>{{ doctor.name }}</option>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <option value="Dr. Smith" {% if query.assigned_doctor == 'Dr. Smith' %}selected{% endif %}>Dr. Smith</option>
+                                                    <option value="Dr. Johnson" {% if query.assigned_doctor == 'Dr. Johnson' %}selected{% endif %}>Dr. Johnson</option>
+                                                    <option value="Dr. Williams" {% if query.assigned_doctor == 'Dr. Williams' %}selected{% endif %}>Dr. Williams</option>
+                                                    <option value="Dr. Brown" {% if query.assigned_doctor == 'Dr. Brown' %}selected{% endif %}>Dr. Brown</option>
+                                                {% endif %}
+                                            </select>
+                                            <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm" onclick="viewQueryDetails('{{ query._id }}')">
+                                            View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctors List Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Available Doctors</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Doctor Name</th>
+                                    <th>Specialization</th>
+                                    <th>Contact</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if doctors %}
+                                    {% for doctor in doctors %}
+                                    <tr>
+                                        <td>{{ doctor.name }}</td>
+                                        <td>{{ doctor.specialization }}</td>
+                                        <td>{{ doctor.contact_number }}</td>
+                                        <td>{{ doctor.email }}</td>
+                                        <td>
+                                            <a href="{{ url_for('edit_doctor', doctor_id=doctor._id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ url_for('delete_doctor', doctor_id=doctor._id) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this doctor?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No doctors available. Add a doctor using the button above.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Query Details Modal -->
+    <div class="modal fade" id="queryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Query Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="queryDetails">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Doctor Modal -->
+    <div class="modal fade" id="addDoctorModal" tabindex="-1" aria-labelledby="addDoctorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addDoctorModalLabel">Add New Doctor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{ url_for('add_doctor') }}" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="doctorName" class="form-label">Doctor Name</label>
+                            <input type="text" class="form-control" id="doctorName" name="doctor_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="specialization" class="form-label">Specialization</label>
+                            <input type="text" class="form-control" id="specialization" name="specialization" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactNumber" class="form-label">Contact Number</label>
+                            <input type="tel" class="form-control" id="contactNumber" name="contact_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Doctor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Initialize sidebar state from localStorage
+            const sidebarState = localStorage.getItem('sidebarCollapsed');
+            if (sidebarState === 'true') {
+                $('.sidebar').addClass('collapsed');
+                $('.main-content').addClass('expanded');
+            }
+
+            // Toggle sidebar
+            $('#sidebarCollapse').click(function() {
+                $('.sidebar').toggleClass('collapsed');
+                $('.main-content').toggleClass('expanded');
+                // Save sidebar state to localStorage
+                localStorage.setItem('sidebarCollapsed', $('.sidebar').hasClass('collapsed'));
+            });
+        });
+
+        function viewQueryDetails(queryId) {
+            // In a real application, you would fetch the query details from the server
+            const queryDetails = document.getElementById('queryDetails');
+            
+            // For demonstration, we'll just show some placeholder content
+            queryDetails.innerHTML = `
+                <p><strong>Query ID:</strong> ${queryId}</p>
+                <p><strong>Status:</strong> Processing</p>
+                <p><strong>Created Date:</strong> ${new Date().toLocaleDateString()}</p>
+            `;
+            
+            // Use Bootstrap's modal method
+            var myModal = new bootstrap.Modal(document.getElementById('queryModal'));
+            myModal.show();
+        }
+    </script>
+</body>
+</html> 
