@@ -2,6 +2,10 @@
 
 A comprehensive web-based platform that streamlines the organ donation process by connecting donors with patients in need, managing medical records, and facilitating the organ matching process.
 
+https://github.com/yourusername/organ-donation-system/assets/yourUserID/Organ%20Donation%20Management%20System%20-%20Google%20Chrome%202025-03-20%2021-02-22.mp4
+
+> Note: For optimal viewing, it's recommended to watch the demo video at 1.5x speed.
+
 ![Admin Panel](static/results/admin_panel_1.png)
 
 ## 🌟 Features
