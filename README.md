@@ -2,7 +2,7 @@
 
 A comprehensive web-based platform that streamlines the organ donation process by connecting donors with patients in need, managing medical records, and facilitating the organ matching process.
 
-https://github.com/rameshbhopale02/organ-management/blob/main/static/vid/organ_donate_process_2.mp4
+https://github.com/rameshbhopale02/organ-management/blob/main/static/vid/organ_donate_process_2.gif
 
 > Note: For optimal viewing, it's recommended to watch the demo video at 1.5x speed.
 
